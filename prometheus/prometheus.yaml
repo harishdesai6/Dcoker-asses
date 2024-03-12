@@ -1,1 +1,11 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 15s
 
+scrape_configs:
+  - job_name: 'csvserver'
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+        - 'prometheus:9090'
+        - 'csvserver:9300'
