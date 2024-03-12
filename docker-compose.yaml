@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  csvserver:
+    image: infracloudio/csvserver:latest
+    container_name: csvserver
+    env_file:
+      - csvserver.env
+    # environment:
+    #   - CSVSERVER_BORDER=${CSVSERVER_BORDER}
+    #   - CSVSERVER_LISTEN_ADDRESS=${CSVSERVER_LISTEN_ADDRESS}
+    #   - CSVSERVER_PORT=${CSVSERVER_PORT}
+    volumes:
+      - ./inputFile:/csvserver/inputdata
+    ports:
+      - "9393:9300"
+    restart: unless-stopped
+    networks:
+      - csvserver-net
+
+  prometheus:
+    image: prom/prometheus:v2.45.2
+    container_name: prometheus
+    command: ["--web.enable-lifecycle", "--config.file=/etc/prometheus/prometheus.yml", "--log.level=debug"]
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+    networks:
+      - csvserver-net
+
+volumes:
+  csvserver-data:
+
+networks:
+  csvserver-net:
+    driver: bridge
